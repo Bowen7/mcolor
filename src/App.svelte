@@ -1,10 +1,12 @@
 <script>
-	export let name;
+	import ColorInput from './ColorInput.svelte'
+	import Converter from './Converter.svelte'
+	let value = ''
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<ColorInput bind:value={value}/>
+  <Converter value={value}/>
 </main>
 
 <style>
