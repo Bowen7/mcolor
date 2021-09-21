@@ -4,7 +4,7 @@
   let g = 0
   let b = 0
   let a = 0
-  let list = []
+  let colorList = []
 
   const convertFromHex = (value) => {
     if (value[0] === '#') {
@@ -23,34 +23,63 @@
     b = value & 255
     a = 1
   }
-  const convertToHex = () => {}
+  const componentToHex = (c) => {
+    const hex = c.toString(16)
+    return hex.length === 1 ? '0' + hex : hex
+  }
+  const convertToHex = () => {
+    return { label: 'HEX', text: '#' + componentToHex(r) + componentToHex(g) + componentToHex(b) }
+  }
 
   const convertFromHex8 = (value) => {}
-  const convertToHex8 = () => {}
+  // const convertToHex8 = () => {}
 
-  const convertFromRgb = (value) => {}
+  const convertFromRgb = (value) => {
+    value = value.slice(4, -1).replace(/ *, */g, ',');
+    ([r, g, b] = value.split(',').map(item => Number(item)))
+    a = 1
+  }
   const convertToRgb = () => {
-    return { label: 'rgb', text: `rgb(${r}, ${g}, ${b})` }
+    return { label: 'RGB', text: `rgb(${r}, ${g}, ${b})` }
   }
 
-  const convertFromRgba = () => {}
+  const convertFromRgba = () => {
+    value = value.slice(5, -1).replace(/ *, */g, ',');
+    ([r, g, b, a] = value.split(',').map(item => Number(item)))
+  }
   const convertToRgba = () => {
-    return { label: 'rgba', text: `rgba(${r}, ${g}, ${b}, ${a})` }
+    return { label: 'RGBA', text: `rgba(${r}, ${g}, ${b}, ${a})` }
   }
 
-  const genList = (excludedType) => {
-    list = []
-    const types = ['hex', 'hex8', 'rgb', 'rgba'].filter(type => type !== excludedType)
+  const convertToVec3 = () => {
+    const rgbText = [r, g, b].map(item => (item / 255).toFixed(3)).join(', ')
+    return { label: 'GLSL VEC3', text: `vec3(${rgbText})` }
+  }
+
+  const convertToVec4 = () => {
+    const rgbText = [r, g, b].map(item => (item / 255).toFixed(3)).join(', ')
+    return { label: 'GLSL VEC4', text: `vec4(${rgbText}, ${a})` }
+  }
+
+  const genColorList = (excludedType) => {
+    colorList = []
+    const types = ['hex', 'hex8', 'rgb', 'rgba', 'vec3', 'vec4'].filter(type => type !== excludedType)
     types.forEach(type => {
       switch (type) {
         case 'hex':
-          list.push(convertToHex())
+          colorList.push(convertToHex())
           break
         case 'rgb':
-          list.push(convertToRgb())
+          colorList.push(convertToRgb())
           break
         case 'rgba':
-          list.push(convertToRgba())
+          colorList.push(convertToRgba())
+          break
+        case 'vec3':
+          colorList.push(convertToVec3())
+          break
+        case 'vec4':
+          colorList.push(convertToVec4())
           break
         default:
           break
@@ -66,8 +95,13 @@
   }
 
   const detectType = (value) => {
-    console.log(value)
     if (!value) {
+      colorList = []
+      return
+    }
+    if (Array.isArray(value)) {
+      ([r, g, b, a] = value)
+      genColorList('')
       return
     }
     value = value.trim()
@@ -82,10 +116,16 @@
           case 'hex8':
             convertFromHex8(value)
             break
+          case 'rgb':
+            convertFromRgb(value)
+            break
+          case 'rgba':
+            convertFromRgba(value)
+            break
           default:
             break
         }
-        genList(type)
+        genColorList(type)
         return
       }
     }
@@ -95,10 +135,26 @@
 </script>
 
 <main>
-  {#each list as item}
+  {#if value}
+    <div class="legend-container">
+      <div class="legend" style="background: rgba({r}, {g}, {b}, {a});"></div>
+    </div>
+  {/if}
+  {#each colorList as item}
 		<p>{item.label}: {item.text}</p>
 	{/each}
 </main>
 
 <style>
+  .legend-container {
+    border: 1px solid #000;
+    margin-top: 12px;
+    width: 22px;
+    height: 22px;
+  }
+  .legend {
+    border: 1px solid #fff;
+    width: 20px;
+    height: 20px;
+  }
 </style>

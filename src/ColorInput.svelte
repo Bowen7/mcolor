@@ -14,6 +14,11 @@
       }
     }
   }
+
+  const handleReset = () => {
+    value = ''
+    file = null
+  }
   
   onMount(() => {
     document.addEventListener('paste', handlePaste)
@@ -21,9 +26,20 @@
 </script>
 
 <main>
-  <input bind:value={value}/>
-  <ImageColorInput file={file}/>
+  {#if file}
+    <ImageColorInput file={file} bind:value={value}/>
+    <button on:click={handleReset}>reset</button>
+  {:else}
+    <p>You can input the color value, or paste a image.</p>
+    <input bind:value={value} spellcheck="false"/>
+  {/if}
 </main>
 
 <style>
+  button {
+    margin-top: 24px;
+  }
+  p { 
+    font-size: 14px;
+  }
 </style>

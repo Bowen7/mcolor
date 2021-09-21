@@ -29,19 +29,23 @@ label {
 	display: block;
 }
 
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
+input {
+	font-size: 14px;
+	padding: 0.5em 0.625em;
 	margin: 0 0 0.5em 0;
 	box-sizing: border-box;
-	border: 1px solid #ccc;
-	border-radius: 2px;
+	border: 1px solid rgb(234, 234, 234);
+	border-radius: 5px;
+	text-decoration: none;
 }
 
 input:disabled {
 	color: #ccc;
+}
+
+input:focus {
+	border-color:#000;
+	outline: none;
 }
 
 button {
