@@ -78,9 +78,11 @@
     if (locked) {
       return
     }
-    const x = event.offsetX
-    const y = event.offsetY
-    const { width, data } = imageData
+    const rect = canvas.getBoundingClientRect()
+    const { width, height, data } = imageData
+    const x = Math.min(Math.max(event.clientX - rect.left, 0), width - 1)
+    const y = Math.min(Math.max(event.clientY - rect.top, 0), height - 1)
+
     const r = data[(y * width + x) * 4]
     const g = data[(y * width + x) * 4 + 1]
     const b = data[(y * width + x) * 4 + 2]
